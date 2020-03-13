@@ -83,6 +83,7 @@
 				newDiv.style.zIndex = getZIndex();
 				// TODO : ajoute l'élément div dans le tableau
 				myDivs.push(newDiv);
+
 				// TODO : ajoute l'élément div dans le dom (élément id 'maindiv')
 				this.append(newDiv);
 			};
@@ -108,9 +109,9 @@
 			// TODO : récupérer dans d l'élément div maindiv
 			let maindiv = document.getElementById('maindiv');
 			// TODO : ajouter un écouteur "click" sur l'élément maindiv qui appel la fonction addDiv
-			maindiv.addEventListener('click', addDiv);
 			// TODO : ajouter un écouteur "mousemove" sur l'élément maindiv qui appel la fonction handleMouseMove
 			maindiv.addEventListener('mousemove', handleMouseMove);
+			maindiv.addEventListener('mousemove', addDiv);
 			// TODO : appeler la fonction fall toutes les 25 ms
 			setInterval(fall, 25);
 		}
