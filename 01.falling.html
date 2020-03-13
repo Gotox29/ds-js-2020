@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Faire tomber des trucs JS</title>
+	<script type="text/javascript">
+
+		// fonction utilitaire qui retourne un nombre à partir d'une chaine
+		// exemple : '125px' -> 125
+		function extractPx(p) {
+			return parseInt(p.substring(0, p.length - 2));
+		}
+
+		// fonction utilitaire qui retourne une chaine en pixel à partir d'un nombre
+		// exemple : 125 -> '125px'
+		function createPx(p) {
+			return parseInt(p) + 'px';
+		}
+
+		// fonction utilitaire qui retourne un identifiant unique
+		var idDiv = 0;
+		function getDivId() {
+			idDiv++;
+			return "div" + idDiv;
+		}
+
+		// fonction qui retourne le z-index en fonction de l'ordre de création
+		function getZIndex() {
+			return idDiv;
+		}
+
+		// fonction utilitaire qui permet de stocker la position de la souris
+		var posX = '0px', posY = '0px';
+		function handleMouseMove(event) {
+			event = event || window.event; // IE-ism
+			posX = createPx(event.pageX);
+			posY = createPx(event.pageY);
+		}
+
+		// BONUS : faire une fonction qui change l'ordre des div (visuel)
+		// appeler cette fonction au bon endroit
+		function sortNoIdea() {
+		}
+
+		// fonction utilitaire qui retourne une couleur en hexadecimal
+		function chooseColor() {
+			return '#' + Math.floor(Math.random() * 16777215).toString(16);
+		}
+
+		// fonction utilitaire qui retourne une taille aléatoire entre 10px et 160px
+		function chooseSize() {
+			return (Math.floor(Math.random() * 150) + 10) + 'px';
+		}
+
+		// fonction utilitaire qui retourne une vitesse entre 1 et 11
+		function vitesse() {
+			return Math.floor(Math.random() * 10) + 1;
+		}
+
+		var myDivs = []; // tableau de div
+		var maxDiv = 1000; // maximum d'élément affichés
+
+		// permet d'ajouter un élément
+		function addDiv() {
+			// TODO : création d'un nouveau div uniquement si on a pas atteint le max
+			if (idDiv < maxDiv) {
+				// TODO : on crée un nouvel élément DIV (newDiv) et on lui assigne à l'attribut id avec le résultat de la fonction getDivId()
+				let newDiv = document.createElement('DIV')
+				newDiv.setAttribute('id', getDivId());
+				// TODO : utilise la fonction utilitaire pour choisir une couleur initiale
+				newDiv.style.background = chooseColor();
+				// TODO : utilise la fonction utilitaire pour choisir une vitesse initiale
+				newDiv.vitesse = vitesse();
+				// TODO : utilise la fonction utilitaire pour choisir une taille (largeur/hauteur)
+				//newDiv.style.width = chooseSize();
+				newDiv.style.height = newDiv.style.width = chooseSize();
+				// TODO : définit la position de l'élement avec le curseur de la souris
+				// newDiv.style.transformOrigin = 'center'
+				newDiv.style.top = createPx(extractPx(posY) - extractPx(newDiv.style.width) / 2);
+				newDiv.style.left = createPx(extractPx(posX) - extractPx(newDiv.style.width) / 2);
+				// TODO : définit la profondeur de l'élément en fonction de son id
+				newDiv.style.zIndex = getZIndex();
+				// TODO : ajoute l'élément div dans le tableau
+				myDivs.push(newDiv);
+				// TODO : ajoute l'élément div dans le dom (élément id 'maindiv')
+				this.append(newDiv);
+			};
+		}
+
+		// fonction qui permet de diminuer la position y des div
+		function fall() {
+			// TODO : parcourir le tableau myDiv et mettre les éléments dans div
+			for (div in myDivs) {
+				// si la taille de l'écran est supérieur à la position du div
+				if (screen.availHeight > extractPx(myDivs[div].style.top)) {
+					// TODO : alors on ajoute la vitesse à la position y
+					myDivs[div].style.top = createPx(extractPx(myDivs[div].style.top) + myDivs[div].vitesse);
+				} else {
+					// TODO : sinon on initialise à 0px la position y
+					myDivs[div].style.top = createPx(0);
+				}
+			}
+		}
+
+		// fonction d'initialisation
+		function init() {
+			// TODO : récupérer dans d l'élément div maindiv
+			let maindiv = document.getElementById('maindiv');
+			// TODO : ajouter un écouteur "click" sur l'élément maindiv qui appel la fonction addDiv
+			maindiv.addEventListener('click', addDiv);
+			// TODO : ajouter un écouteur "mousemove" sur l'élément maindiv qui appel la fonction handleMouseMove
+			maindiv.addEventListener('mousemove', handleMouseMove);
+			// TODO : appeler la fonction fall toutes les 25 ms
+			setInterval(fall, 25);
+		}
+
+		// appel la fonction init apres le chargement de la page
+		window.addEventListener("load", init);
+
+	</script>
+
+	<style type="text/css">
+		#maindiv>div {
+			position: absolute;
+			display: block;
+			border-radius: 50%;
+		}
+
+		body,
+		#maindiv {
+			z-index: 9999;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			background-color: grey;
+		}
+	</style>
+</head>
+
+<body id="body">
+	<div id="maindiv"></div>
+</body>
+
+</html>
