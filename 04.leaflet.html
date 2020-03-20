@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
+    <!-- https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre&facet=libelle_commune&facet=localisation&facet=appellation_officiel&facet=position&facet=code_departement&refine.code_departement=29 -->
+    <script>
+        var mymap
+        function ouvrirMap() {
+            mymap = L.map('mapid').setView([48.4, -4.4833], 12);
+
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/" > CC - BY - SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 18,
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1,
+                accessToken: 'pk.eyJ1IjoiZHJvbGFyZCIsImEiOiJjazdxZGp5d3gwMDk5M2ZuNHAwbWtvM3BzIn0.j9a00O6Sdou2mSoqsU2I4Q'
+            }).addTo(mymap);
+            loadDonnees();
+
+        }
+
+        function addMarker(latLong, desc) {
+            console.log('ici')
+            let marker = L.marker(latLong).addTo(mymap);
+            //marker.bindPopup(desc).openPopup();
+        }
+        let compt = 0;
+        var interval;
+        function loadDonnees() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    //document.getElementById("demo").innerHTML =
+                    //this.responseText;
+                    //console.log(this);
+                    let json = JSON.parse(this.responseText).records;
+                    console.log(json);
+                    let max = json.length;
+                    interval = setInterval(function () {
+                        aussiANommer(json, max);
+                    }, 200)
+                }
+            };
+            xhttp.open("GET", "https://data.education.gouv.fr/api/records/1.0/search/?dataset=fr-en-adresse-et-geolocalisation-etablissements-premier-et-second-degre&rows=-1&facet=libelle_commune&facet=localisation&facet=appellation_officiel&facet=position&facet=code_departement&refine.code_departement=29", true);
+            xhttp.send();
+        }
+        function aussiANommer(json, max) {
+
+            if (compt >= max) {
+                clearInterval(interval);
+            } else {
+                let plus = (compt + 10) <= max ? compt + 10 : max;
+                aNommer(json.slice(compt, plus));
+                compt = plus;
+            }
+        }
+        function aNommer(json) {
+            console.log(json);
+            for (let ecole of json) {
+                //console.log(typeof ecole.fields.position);
+                let champs = ecole.fields
+                if (typeof champs['position'] !== 'undefined')
+                    addMarker(champs['position'], champs['appellation_officielle']);
+            }
+        }
+        function start() {
+            ouvrirMap();
+        }
+
+        window.addEventListener('load', start)
+    </script>
+    <style>
+        #mapid {
+            height: 480px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mapid"></div>
+
+</body>
+
+</html>

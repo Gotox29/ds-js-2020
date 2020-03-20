@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Simple Form</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="w3.css">
+	<style type="text/css">
+		*, input {
+			padding: 5px;
+			margin: 5px;
+		}
+
+		.error {
+  			box-shadow: 1px 1px 5px rgba(200, 0, 0, 0.85);
+		}
+
+	</style>
+	<script type="text/javascript">
+		function addInput() {
+			// TODO : créer un élémént input
+			// TODO : définir le type de l'élément avec la valeur de "inputtype"
+			// TODO : définir la valeur de l'élément avec la valeur de "inputvalue"
+			// TODO : si le checkbox "inputrequired" est coché, mettre le champs required de l'élément à true
+
+			// TODO : récupérer l'élement form 'inputform'
+			// TODO : ajouter l'élemet créé au form
+		}
+
+		function init() {
+			var button = document.getElementById('buttonajouter');
+			button.addEventListener('click', addInput);
+
+			var form = document.getElementById('form1');
+
+			var select = document.getElementById('inputtype');
+			var inputType = ["text","password","submit","reset","radio","checkbox","button","color","date","datetime-local","email","month","number","range","search","tel","time","url","week"];
+
+			for (var i in inputType) {
+				var option = document.createElement('option');
+				var id = inputType[i];
+				option.id = id;
+				option.value = id;
+				option.innerHTML = id;
+				select.appendChild(option);
+			}
+		}
+	</script>
+</head>
+<body onload="init()">
+	<form id="form1" onsubmit="return validateForm()" >
+		<fieldset>
+			<legend>Creation</legend>
+
+			<label for="inputtype">Create input of type</label>
+			<select id="inputtype" type="text"></select>
+
+			<input name="inputvalue" type="text" placeholder="Value"/>
+
+			<input id="inputrequired" name="inputrequired" type="checkbox"/><label for="inputrequired">Required</label>
+
+			<button id="buttonajouter" type="button" name="buttonajouter">Ajouter</button>
+		</fieldset>
+	</form>
+	<form id="inputform"></form>
+</body>
+</html>
